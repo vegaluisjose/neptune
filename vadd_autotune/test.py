@@ -2,6 +2,8 @@ import torch
 import triton
 import triton.language as tl
 
+from time import perf_counter
+
 
 @triton.autotune(
     configs=[
@@ -31,8 +33,11 @@ def vector_add(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
 
 
 if __name__ == "__main__":
-    # Example usage
-    x = torch.randn(1024, device="cuda")
-    y = torch.randn(1024, device="cuda")
+    torch.manual_seed(0)
+    size = 100000000
+    x = torch.randn(size, device="cuda")
+    y = torch.randn(size, device="cuda")
+    tic = perf_counter()
     output = vector_add(x, y)
-    print(output)
+    toc = perf_counter()
+    print(f"Elapsed time (seconds): {toc-tic}")

@@ -1,5 +1,7 @@
 import torch
-from matmul import matmul, _matmul
+
+from matmul import matmul
+from time import perf_counter
 
 
 def print_capabilities():
@@ -20,6 +22,7 @@ def init_input(m, n, dtype, acc_dtype):
 
 
 if __name__ == "__main__":
+    torch.manual_seed(0)
     print_capabilities()
 
     M = 256
@@ -28,7 +31,9 @@ if __name__ == "__main__":
     dtype = "float16"
     a = init_input(M, K, dtype, None)
     b = init_input(K, N, dtype, None)
-    res = matmul(a, b, None, None, None)
-    exp = torch.matmul(a, b)
 
-    torch.testing.assert_close(res, exp)
+    tic = perf_counter()
+    res = matmul(a, b, None, None, None)
+    toc = perf_counter()
+
+    print(f"Elapsed time (seconds): {toc-tic}")

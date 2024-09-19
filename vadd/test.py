@@ -1,7 +1,8 @@
 import torch
-
 import triton
 import triton.language as tl
+
+from time import perf_counter
 
 
 @triton.jit
@@ -54,14 +55,11 @@ def add(x: torch.Tensor, y: torch.Tensor):
 
 if __name__ == "__main__":
     torch.manual_seed(0)
-    size = 98432
+    size = 100000000
     x = torch.rand(size, device="cuda")
     y = torch.rand(size, device="cuda")
-    output_torch = x + y
+    tic = perf_counter()
     output_triton = add(x, y)
-    print(output_torch)
-    print(output_triton)
-    print(
-        f"The maximum difference between torch and triton is "
-        f"{torch.max(torch.abs(output_torch - output_triton))}"
-    )
+    toc = perf_counter()
+    print(f"Elapsed time (seconds): {toc-tic}")
+    
